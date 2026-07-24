@@ -19,7 +19,8 @@ export class TileManager extends Phaser.GameObjects.Container {
 	public scene: BaseScene;
 
 	private map: Phaser.Tilemaps.Tilemap;
-	private tiles: Tile[][];
+	private tiles: Tile[][]; // Background layer
+	private entities: Tile[][]; // Entity layer (ducks and stuff)
 
 	constructor(scene: BaseScene) {
 		super(scene);
@@ -46,27 +47,34 @@ export class TileManager extends Phaser.GameObjects.Container {
 
 		/* Graphics */
 
+		// Loads a map layer as a texture
 		const firstLayer = this.map.createLayer("first_layer", tilesetOverworld);
-		const secondLayer = this.map.createLayer("second_layer", tilesetOverworld);
 		if (!firstLayer) throw Error("Layer 'first_layer' not found");
-		if (!secondLayer) throw Error("Layer 'second_layer' not found");
-
 		this.add(firstLayer);
+
+		const secondLayer = this.map.createLayer("second_layer", tilesetOverworld);
+		if (!secondLayer) throw Error("Layer 'second_layer' not found");
+		this.add(secondLayer);
 
 		/* Tiles */
 
 		this.tiles = [];
+		this.entities = [];
+
 		for (let y = 0; y < this.height; y++) {
 			this.tiles[y] = [];
-			for (let x = 0; x < this.width; x++) {
-				const index = firstLayer.getTileAt(x, y).index - 1;
-				const tile = Tile[index];
-				this.tiles[y][x] = tile;
+			this.entities[y] = [];
 
-				// const wallTile = layer.data[y][x];
-				// if (wallTile && wallTile.index !== -1) {
-				// 	this.tiles[y][x] = this.mapTileToEnum(wallTile);
-				// }
+			for (let x = 0; x < this.width; x++) {
+				const tile = firstLayer.getTileAt(x, y);
+				if (tile) {
+					this.tiles[y][x] = Tile[tile.index - 1];
+				}
+
+				const entityLayerTile = secondLayer.getTileAt(x, y);
+				if (entityLayerTile) {
+					this.entities[y][x] = Tile[entityLayerTile.index - 1];
+				}
 			}
 		}
 
