@@ -1,53 +1,61 @@
-import { Image, SpriteSheet, Audio, tilemap, Tilemap } from "./util";
-import { image, sound, music, loadFont, spritesheet } from "./util";
+import { Image, SpriteSheet, Audio, tilemap, Tilemap } from './util';
+import { image, sound, music, loadFont, spritesheet } from './util';
 
 /* Images */
 const images: Image[] = [
-	// Backgrounds
-	image("backgrounds/background", "background"),
+  // Backgrounds
+  image('backgrounds/background', 'background'),
 
-	// Characters
-	// image("characters/player", "player"),
+  // Characters
+  // image("characters/player", "player"),
 
+  // Dockscene
+  image('backgrounds/dock_background', 'dock_background'),
+  image('shop/overworld_shop', 'overworld_shop'),
+  image('characters/hero-kobold', 'kobold'),
+  image('dock_boat', 'dock_boat'),
 
-	// Dockscene
-	image('backgrounds/dock_background', 'dock_background'),
-	image('shop/overworld_shop', 'overworld_shop'),
+  // Placeholder
+  image('characters/boat', 'boat'),
+  image('characters/boat_outside', 'boat_outside'),
+  image('characters/kobold', 'creature'),
 
-	// Items
-	image("items/coin", "coin"),
+  // Items
+  image('items/coin', 'coin'),
 
-	// UI
-	image("ui/hud", "hud"),
+  // UI
+  image('ui/hud', 'hud'),
 
-	// Titlescreen
-	image("titlescreen/sky", "title_sky"),
-	image("titlescreen/background", "title_background"),
-	image("titlescreen/foreground", "title_foreground"),
-	image("titlescreen/character", "title_character"),
+  // Titlescreen
+  image('titlescreen/sky', 'title_sky'),
+  image('titlescreen/background', 'title_background'),
+  image('titlescreen/foreground', 'title_foreground'),
+  image('titlescreen/character', 'title_character'),
 ];
 
 /* Spritesheets */
 const spritesheets: SpriteSheet[] = [
-	spritesheet("tilesets/overworld", "tileset_overworld", 128, 128),
-	spritesheet("player", "player", 128, 128),
-	spritesheet("ship", "ship", 128, 128),
+  spritesheet('tilesets/overworld', 'tileset_overworld', 128, 128),
+  spritesheet('player', 'player', 128, 128),
+  spritesheet('ship', 'ship', 128, 128),
 ];
 
 /* Tilemaps */
 
 export const tilemaps: Tilemap[] = [
-	tilemap("Overworld1.json", "tilemap_overworld1"),
+  tilemap('Overworld1.json', 'tilemap_overworld1'),
 ];
 
 /* Audios */
 const audios: Audio[] = [
-	music("title", "m_main_menu"),
-	music("first", "m_first"),
-	sound("tree/rustle", "t_rustle", 0.5),
+  music('title', 'm_main_menu'),
+  music('first', 'm_first'),
+  sound('tree/rustle', 't_rustle', 0.5),
+  sound('squish/squish1', 's_squish1', 1),
+  sound('squish/squish2', 's_squish2', 1),
 ];
 
 /* Fonts */
-await loadFont("DynaPuff-Medium", "Game Font");
+await loadFont('DynaPuff-Medium', 'Game Font');
 
 export { images, spritesheets, audios };
