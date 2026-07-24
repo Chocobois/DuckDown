@@ -19,13 +19,13 @@ export default class ShopButton extends Button {
         this.shopSpriteOutline.active = false;
         
         this.bindInteractive(this.shopSprite);
-    }
 
+        this.shopSprite.on('pointerover', () => {
+            this.shopSpriteOutline.active = true;
+        });
 
-    onOver() {
-        this.shopSpriteOutline.active = true;
-    }
-    onOut() {
-        this.shopSpriteOutline.active = false;
+        this.shopSprite.on('pointerout', () => {
+            this.shopSpriteOutline.active = false;
+        });
     }
 }
