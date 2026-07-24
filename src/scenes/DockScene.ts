@@ -1,11 +1,13 @@
-import Phaser from "phaser";
+import Phaser, { WEBGL } from "phaser";
 
 import { BaseScene } from "./BaseScene";
+import { OutlineFilter } from "@/filters/Outline";
+import ShopButton from "@/components/buttons/ShopButton";
 
 export class DockScene extends BaseScene {
 
     public background: Phaser.GameObjects.Image;
-    public shop: Phaser.GameObjects.Image;
+    public shop: ShopButton;
 
 	constructor() {
 		super({ key: "DockScene" });
@@ -14,7 +16,6 @@ export class DockScene extends BaseScene {
     create() {
         this.background = this.add.image(this.CX, this.CY, "dock_background");
 
-        this.shop = this.add.image(360, 160, "overworld_shop");
-        this.shop.setScale(0.7);
+        this.shop = new ShopButton(this, 360, 180, 0.7);
     }
 }
