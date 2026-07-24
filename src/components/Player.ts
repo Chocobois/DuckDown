@@ -1,13 +1,10 @@
 import Phaser from "phaser";
-import { GameScene } from "@/scenes/GameScene";
+import { BaseScene } from "@/scenes/BaseScene";
+import { TileEntity } from "./TileEntity";
 
 const TAPPING_TIMER = 200; // ms
 
-export class Player extends Phaser.GameObjects.Container {
-	public scene: GameScene;
-	public tileX: number;
-	public tileY: number;
-
+export class Player extends TileEntity {
 	// Sprites
 	private spriteSize: number;
 	private sprite: Phaser.GameObjects.Sprite;
@@ -20,13 +17,9 @@ export class Player extends Phaser.GameObjects.Container {
 	private tappedTimer: number;
 	private inputVec = new Phaser.Math.Vector2(0, 0); // Just used for keyboard -> vector
 	private touchPos = new Phaser.Math.Vector2(0, 0);
-	private movementCooldown: number = 0;
-	private border: { [key: string]: number };
 
-	constructor(scene: GameScene) {
-		super(scene, 0, 0);
-		scene.add.existing(this);
-		this.scene = scene;
+	constructor(scene: BaseScene) {
+		super(scene);
 
 		/* Sprite */
 		this.spriteSize = 128;
@@ -66,12 +59,6 @@ export class Player extends Phaser.GameObjects.Container {
 		this.isTouched = false;
 		this.isTapped = false;
 		this.tappedTimer = 0;
-		this.border = {
-			left: 100,
-			right: scene.W - 100,
-			top: 100,
-			bottom: scene.H - 100,
-		};
 	}
 
 	update(time: number, delta: number) {
