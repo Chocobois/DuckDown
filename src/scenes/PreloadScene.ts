@@ -1,12 +1,11 @@
 import { BaseScene } from "./BaseScene";
-import { images, spritesheets, audios } from "@/assets/assets";
+import { images, spritesheets, audios, tilemaps } from "@/assets/assets";
 import { title, version } from "@/version.json";
 
 export class PreloadScene extends BaseScene {
 	constructor() {
 		super({ key: "PreloadScene" });
 	}
-
 
 	preload() {
 		this.cameras.main.setBackgroundColor(0x000000);
@@ -54,12 +53,17 @@ export class PreloadScene extends BaseScene {
 		for (let audio of audios) {
 			this.load.audio(audio.key, audio.path);
 		}
+
+		for (let tilemap of tilemaps) {
+			console.log("LOAD", tilemap);
+			this.load.tilemapTiledJSON(tilemap.key, tilemap.path);
+		}
 	}
 
 	create() {
 		this.fade(true, 100, 0x000000);
 		this.addEvent(100, () => {
-			this.scene.start("TitleScene");
+			this.scene.start("GameScene");
 		});
 	}
 }

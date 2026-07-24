@@ -94,18 +94,18 @@ export class Player extends Phaser.GameObjects.Container {
 		this.y += (this.velocity.y * delta) / 1000;
 
 		// Border collision
-		if (this.x < this.border.left) {
-			this.x = this.border.left;
-		}
-		if (this.x > this.border.right) {
-			this.x = this.border.right;
-		}
-		if (this.y < this.border.top) {
-			this.y = this.border.top;
-		}
-		if (this.y > this.border.bottom) {
-			this.y = this.border.bottom;
-		}
+		// if (this.x < this.border.left) {
+		// 	this.x = this.border.left;
+		// }
+		// if (this.x > this.border.right) {
+		// 	this.x = this.border.right;
+		// }
+		// if (this.y < this.border.top) {
+		// 	this.y = this.border.top;
+		// }
+		// if (this.y > this.border.bottom) {
+		// 	this.y = this.border.bottom;
+		// }
 
 		// Animation (Change to this.sprite.setScale if needed)
 		const squish = 1.0 + 0.02 * Math.sin((6 * time) / 1000);
