@@ -18,7 +18,7 @@ export class TileManager extends Phaser.GameObjects.Container {
 
 	private map: Phaser.Tilemaps.Tilemap;
 	private tiles: Tile[][]; // Background layer
-	private entities: Tile[][]; // Entity layer (ducks and stuff)
+	private entitiesToBeSpawned: Tile[][]; // Entity layer (ducks and stuff)
 
 	constructor(scene: BaseScene) {
 		super(scene);
@@ -26,6 +26,7 @@ export class TileManager extends Phaser.GameObjects.Container {
 		scene.add.existing(this);
 	}
 
+	// Loads tilemap and returns a list of entities to be spawned
 	loadTilemap(tilemapKey: string) {
 		this.map = this.scene.make.tilemap({ key: tilemapKey });
 		this.width = this.map.width;
@@ -50,18 +51,19 @@ export class TileManager extends Phaser.GameObjects.Container {
 		if (!firstLayer) throw Error("Layer 'first_layer' not found");
 		this.add(firstLayer);
 
-		const secondLayer = this.map.createLayer("second_layer", tilesetOverworld);
-		if (!secondLayer) throw Error("Layer 'second_layer' not found");
-		this.add(secondLayer);
+		const entityLayer = this.map.createLayer("second_layer", tilesetOverworld);
+		if (!entityLayer) throw Error("Layer 'second_layer' not found");
+		entityLayer.setVisible(false);
+		this.add(entityLayer);
 
 		/* Tiles */
 
 		this.tiles = [];
-		this.entities = [];
+		this.entitiesToBeSpawned = [];
 
 		for (let y = 0; y < this.height; y++) {
 			this.tiles[y] = [];
-			this.entities[y] = [];
+			this.entitiesToBeSpawned[y] = [];
 
 			for (let x = 0; x < this.width; x++) {
 				const tile = firstLayer.getTileAt(x, y);
@@ -69,9 +71,9 @@ export class TileManager extends Phaser.GameObjects.Container {
 					this.tiles[y][x] = Tile[tile.index - 1];
 				}
 
-				const entityLayerTile = secondLayer.getTileAt(x, y);
+				const entityLayerTile = entityLayer.getTileAt(x, y);
 				if (entityLayerTile) {
-					this.entities[y][x] = Tile[entityLayerTile.index - 1];
+					this.entitiesToBeSpawned[y][x] = Tile[entityLayerTile.index - 1];
 				}
 			}
 		}
@@ -100,6 +102,17 @@ export class TileManager extends Phaser.GameObjects.Container {
 		// this.sendToBack(outer);
 
 		// return entityTiles;
+	}
+
+	public spawnEntities(callback: (type: Tile, x: number, y: number) => void) {
+		for (let y = 0; y < this.height; y++) {
+			for (let x = 0; x < this.width; x++) {
+				const entityType = this.entitiesToBeSpawned[y]?.[x];
+				if (entityType) {
+					callback(entityType, x, y);
+				}
+			}
+		}
 	}
 
 	// 	private mapTileToEnum(tile: Phaser.Tilemaps.Tile): Tile {

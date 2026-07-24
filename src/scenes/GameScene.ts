@@ -1,14 +1,18 @@
 import { BaseScene } from "@/scenes/BaseScene";
-import { Player } from "@/components/Player";
-import { TileManager } from "@/components/TileManager";
-import { Ship } from "@/components/Ship";
-import { TileEntity } from "@/components/TileEntity";
+import { Player } from "@/components/entities/Player";
+import { Tile, TileManager } from "@/components/TileManager";
+import { Ship } from "@/components/entities/Ship";
+import { TileEntity } from "@/components/entities/TileEntity";
+import { Duck } from "@/components/entities/Duck";
+import { Down } from "@/components/entities/Down";
+import { Eggs } from "@/components/entities/Eggs";
 
 export class GameScene extends BaseScene {
 	private tileManager: TileManager;
 	// private background: Phaser.GameObjects.Image;
 	private player: Player;
 	private ship: Ship;
+	private entities: TileEntity[];
 	// private ui: UI;
 
 	constructor() {
@@ -22,19 +26,45 @@ export class GameScene extends BaseScene {
 		this.tileManager = new TileManager(this);
 		this.tileManager.loadTilemap("tilemap_overworld1");
 
+		// Spawn entities
+		this.entities = [];
+		this.tileManager.spawnEntities(
+			(type: Tile, tileX: number, tileY: number) => {
+				if (type == "Down") {
+					const down = new Down(this);
+					this.entities.push(down);
+					this.moveEntityToTile(down, tileX, tileY);
+				} else if (type == "Duck") {
+					const duck = new Duck(this);
+					this.entities.push(duck);
+					this.moveEntityToTile(duck, tileX, tileY);
+				} else if (type == "Eggs") {
+					const eggs = new Eggs(this);
+					this.entities.push(eggs);
+					this.moveEntityToTile(eggs, tileX, tileY);
+				} else {
+					console.warn("Unknown entity:", type);
+				}
+			},
+		);
+
 		// this.background = this.add.image(0, 0, "background");
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
 		this.player = new Player(this);
+		this.entities.push(this.player);
+		this.moveEntityToTile(this.player, 28, 15);
+		this.cameras.main.startFollow(this.player);
+
+		// Callbacks
 		this.player.on("move", this.onPlayerMove, this);
 		this.player.on("action", () => {
 			this.player.doABarrelRoll();
 		});
-		this.cameras.main.startFollow(this.player);
-		this.moveEntityToTile(this.player, 28, 15);
 
 		this.ship = new Ship(this);
+		this.entities.push(this.ship);
 		this.moveEntityToTile(this.ship, 24, 15);
 
 		// this.ui = new UI(this);
@@ -43,8 +73,7 @@ export class GameScene extends BaseScene {
 	}
 
 	update(time: number, delta: number) {
-		this.player.update(time, delta);
-		this.ship.update(time, delta);
+		this.entities.forEach((entity) => entity.update(time, delta));
 	}
 
 	initTouchControls() {

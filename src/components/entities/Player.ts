@@ -61,12 +61,6 @@ export class Player extends TileEntity {
 		this.tappedTimer = 0;
 	}
 
-	update(time: number, delta: number) {
-		// Animation (Change to this.sprite.setScale if needed)
-		const squish = 1.0 + 0.02 * Math.sin((6 * time) / 1000);
-		this.setScale(1.0, squish);
-	}
-
 	touchStart(x: number, y: number) {
 		this.isTouched = true;
 		this.isTapped = false;
