@@ -80,28 +80,23 @@ export class TileManager extends Phaser.GameObjects.Container {
 
 		/* Out of bounds texture */
 
-		// const innerLeft = 8;
-		// const innerTop = 8;
-		// const innerWidth = 16 * (this.width - 1);
-		// const innerHeight = 16 * (this.height - 1);
-		// const inner = this.scene.add
-		// 	.rectangle(innerLeft, innerTop, innerWidth, innerHeight, 0x63ad9d)
-		// 	.setOrigin(0);
-		// this.add(inner);
-		// this.sendToBack(inner);
-
-		// const outerLeft = innerLeft - 40 * 16;
-		// const outerTop = innerTop - 40 * 16;
-		// const outerWidth = innerWidth + 80 * 16;
-		// const outerHeight = innerHeight + 80 * 16;
-		// const outer = this.scene.add
-		// 	.tileSprite(outerLeft, outerTop, outerWidth, outerHeight, "out_of_bounds")
-		// 	.setOrigin(0)
-		// 	.setDepth(-2);
-		// this.add(outer);
-		// this.sendToBack(outer);
-
-		// return entityTiles;
+		const tilesOutside = 100;
+		const outsideLeft = -tilesOutside * 128;
+		const outsideTop = -tilesOutside * 128;
+		const outsideWidth = (this.width + 2 * tilesOutside) * 128;
+		const outsideHeight = (this.height + 2 * tilesOutside) * 128;
+		const outer = this.scene.add
+			.tileSprite(
+				outsideLeft,
+				outsideTop,
+				outsideWidth,
+				outsideHeight,
+				"tileset_overworld",
+			)
+			.setOrigin(0)
+			.setDepth(-2);
+		this.add(outer);
+		this.sendToBack(outer);
 	}
 
 	public spawnEntities(callback: (type: Tile, x: number, y: number) => void) {
@@ -145,8 +140,8 @@ export class TileManager extends Phaser.GameObjects.Container {
 		);
 	}
 
-	public getTileAt(tileX: number, tileY: number): Tile {
-		if (!this.isInside(tileX, tileY)) return "Water";
+	public getTileAt(tileX: number, tileY: number): Tile | undefined {
+		if (!this.isInside(tileX, tileY)) return undefined;
 		return this.tiles[tileY]?.[tileX] ?? "Water";
 	}
 

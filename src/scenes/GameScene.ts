@@ -127,9 +127,12 @@ export class GameScene extends BaseScene {
 		const ty = this.player.tileY;
 		const nx = tx + dx;
 		const ny = ty + dy;
-
-		const currentTile = this.tileManager.getTileAt(tx, ty);
 		const nextTile = this.tileManager.getTileAt(nx, ny);
+
+		// Prevent player from moving outside the map
+		if (nextTile === undefined) {
+			return;
+		}
 
 		if (this.isPlayerOnShip) {
 			// Boat can move anywhere for now
