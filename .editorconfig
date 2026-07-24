@@ -1,0 +1,2 @@
+[*.{json,js,ts,html,css,glsl}]
+indent_size = 2
