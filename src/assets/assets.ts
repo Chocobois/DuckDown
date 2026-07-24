@@ -7,7 +7,7 @@ const images: Image[] = [
 	image("backgrounds/background", "background"),
 
 	// Characters
-	image("characters/player", "player"),
+	// image("characters/player", "player"),
 
 
 	// Dockscene
@@ -30,6 +30,8 @@ const images: Image[] = [
 /* Spritesheets */
 const spritesheets: SpriteSheet[] = [
 	spritesheet("tilesets/overworld", "tileset_overworld", 128, 128),
+	spritesheet("player", "player", 128, 128),
+	spritesheet("ship", "ship", 128, 128),
 ];
 
 /* Tilemaps */

@@ -1,12 +1,18 @@
 import { BaseScene } from "@/scenes/BaseScene";
-import { Player } from "@/components/Player";
-import { UI } from "@/components/UI";
-import { TileManager } from "@/components/TileManager";
+import { Player } from "@/components/entities/Player";
+import { Tile, TileManager } from "@/components/TileManager";
+import { Ship } from "@/components/entities/Ship";
+import { TileEntity } from "@/components/entities/TileEntity";
+import { Duck } from "@/components/entities/Duck";
+import { Down } from "@/components/entities/Down";
+import { Eggs } from "@/components/entities/Eggs";
 
 export class GameScene extends BaseScene {
 	private tileManager: TileManager;
 	// private background: Phaser.GameObjects.Image;
 	private player: Player;
+	private ship: Ship;
+	private entities: TileEntity[];
 	// private ui: UI;
 
 	constructor() {
@@ -20,15 +26,46 @@ export class GameScene extends BaseScene {
 		this.tileManager = new TileManager(this);
 		this.tileManager.loadTilemap("tilemap_overworld1");
 
+		// Spawn entities
+		this.entities = [];
+		this.tileManager.spawnEntities(
+			(type: Tile, tileX: number, tileY: number) => {
+				if (type == "Down") {
+					const down = new Down(this);
+					this.entities.push(down);
+					this.moveEntityToTile(down, tileX, tileY);
+				} else if (type == "Duck") {
+					const duck = new Duck(this);
+					this.entities.push(duck);
+					this.moveEntityToTile(duck, tileX, tileY);
+				} else if (type == "Eggs") {
+					const eggs = new Eggs(this);
+					this.entities.push(eggs);
+					this.moveEntityToTile(eggs, tileX, tileY);
+				} else {
+					console.warn("Unknown entity:", type);
+				}
+			},
+		);
+
 		// this.background = this.add.image(0, 0, "background");
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
-		this.player = new Player(this, this.CX, this.CY);
+		this.player = new Player(this);
+		this.entities.push(this.player);
+		this.moveEntityToTile(this.player, 28, 15);
+		this.cameras.main.startFollow(this.player);
+
+		// Callbacks
+		this.player.on("move", this.onPlayerMove, this);
 		this.player.on("action", () => {
 			this.player.doABarrelRoll();
 		});
-		this.cameras.main.startFollow(this.player);
+
+		this.ship = new Ship(this);
+		this.entities.push(this.ship);
+		this.moveEntityToTile(this.ship, 24, 15);
 
 		// this.ui = new UI(this);
 
@@ -36,7 +73,7 @@ export class GameScene extends BaseScene {
 	}
 
 	update(time: number, delta: number) {
-		this.player.update(time, delta);
+		this.entities.forEach((entity) => entity.update(time, delta));
 	}
 
 	initTouchControls() {
@@ -71,5 +108,63 @@ export class GameScene extends BaseScene {
 				this.player.touchEnd(pointer.x, pointer.y);
 			}
 		});
+	}
+
+	/* Player */
+
+	moveEntityToTile(entity: TileEntity, tileX: number, tileY: number) {
+		entity.tileX = tileX;
+		entity.tileY = tileY;
+		const { x, y } = this.tileManager.tileToCoord(tileX, tileY);
+		entity.x = x;
+		entity.y = y;
+	}
+
+	onPlayerMove(dx: number, dy: number) {
+		const tx = this.player.tileX;
+		const ty = this.player.tileY;
+		const nx = tx + dx;
+		const ny = ty + dy;
+
+		const currentTile = this.tileManager.getTileAt(tx, ty);
+		const nextTile = this.tileManager.getTileAt(nx, ny);
+
+		if (this.isPlayerOnShip) {
+			// Boat can move anywhere for now
+			this.moveEntityToTile(this.player, nx, ny);
+
+			// Move with boat on water
+			if (nextTile == "Water") {
+				this.moveEntityToTile(this.ship, nx, ny);
+			}
+			// Step onto land
+			else {
+				this.ship.setCaptain(null);
+			}
+		} else {
+			// Prevent walking into water
+			if (nextTile == "Water" && !this.hasShip(nx, ny)) {
+				return;
+			}
+
+			// Move on land or onto boat
+			this.moveEntityToTile(this.player, nx, ny);
+
+			// Board ship
+			if (this.hasShip(nx, ny)) {
+				this.ship.setCaptain(this.player);
+			}
+		}
+	}
+
+	hasShip(tileX: number, tileY: number) {
+		return tileX == this.ship.tileX && tileY == this.ship.tileY;
+	}
+
+	get isPlayerOnShip(): boolean {
+		return (
+			this.player.tileX == this.ship.tileX &&
+			this.player.tileY == this.ship.tileY
+		);
 	}
 }
