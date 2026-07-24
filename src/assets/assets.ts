@@ -9,6 +9,11 @@ const images: Image[] = [
 	// Characters
 	// image("characters/player", "player"),
 
+
+	// Dockscene
+	image('backgrounds/dock_background', 'dock_background'),
+	image('shop/overworld_shop', 'overworld_shop'),
+
 	// Items
 	image("items/coin", "coin"),
 
