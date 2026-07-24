@@ -8,7 +8,7 @@ export class Ship extends TileEntity {
 	private sprite: Phaser.GameObjects.Sprite;
 
 	constructor(scene: BaseScene) {
-		super(scene);
+		super(scene, "Ship");
 
 		this.sprite = this.scene.add.sprite(0, 0, "ship");
 		this.sprite.setScale(128 / this.sprite.width);

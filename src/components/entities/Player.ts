@@ -19,7 +19,7 @@ export class Player extends TileEntity {
 	private touchPos = new Phaser.Math.Vector2(0, 0);
 
 	constructor(scene: BaseScene) {
-		super(scene);
+		super(scene, "Player");
 
 		/* Sprite */
 		this.spriteSize = 128;

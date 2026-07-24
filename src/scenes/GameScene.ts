@@ -6,6 +6,7 @@ import { TileEntity } from "@/components/entities/TileEntity";
 import { Duck } from "@/components/entities/Duck";
 import { Down } from "@/components/entities/Down";
 import { Eggs } from "@/components/entities/Eggs";
+import { UI } from "@/components/UI";
 
 export class GameScene extends BaseScene {
 	private tileManager: TileManager;
@@ -13,7 +14,7 @@ export class GameScene extends BaseScene {
 	private player: Player;
 	private ship: Ship;
 	private entities: TileEntity[];
-	// private ui: UI;
+	private ui: UI;
 
 	constructor() {
 		super({ key: "GameScene" });
@@ -53,7 +54,6 @@ export class GameScene extends BaseScene {
 		// this.fitToScreen(this.background);
 
 		this.player = new Player(this);
-		this.entities.push(this.player);
 		this.moveEntityToTile(this.player, 28, 15);
 		this.cameras.main.startFollow(this.player);
 
@@ -67,12 +67,14 @@ export class GameScene extends BaseScene {
 		this.entities.push(this.ship);
 		this.moveEntityToTile(this.ship, 24, 15);
 
-		// this.ui = new UI(this);
+		this.ui = new UI(this);
 
 		this.initTouchControls();
 	}
 
 	update(time: number, delta: number) {
+		this.player.update(time, delta);
+		this.ui.update(time, delta);
 		this.entities.forEach((entity) => entity.update(time, delta));
 	}
 
@@ -143,7 +145,7 @@ export class GameScene extends BaseScene {
 			}
 		} else {
 			// Prevent walking into water
-			if (nextTile == "Water" && !this.hasShip(nx, ny)) {
+			if (nextTile == "Water" && !this.checkIfShip(nx, ny)) {
 				return;
 			}
 
@@ -151,14 +153,34 @@ export class GameScene extends BaseScene {
 			this.moveEntityToTile(this.player, nx, ny);
 
 			// Board ship
-			if (this.hasShip(nx, ny)) {
+			if (this.checkIfShip(nx, ny)) {
 				this.ship.setCaptain(this.player);
+			}
+		}
+
+		// Check if any entities can be collected
+		const entity = this.getEntityAt(nx, ny);
+		if (entity) {
+			if (this.ui.canCollect(entity.entityType)) {
+				this.ui.addItem(entity.entityType);
+				this.removeEntity(entity);
 			}
 		}
 	}
 
-	hasShip(tileX: number, tileY: number) {
-		return tileX == this.ship.tileX && tileY == this.ship.tileY;
+	checkIfShip(tileX: number, tileY: number) {
+		return this.getEntityAt(tileX, tileY) instanceof Ship;
+	}
+
+	getEntityAt(tileX: number, tileY: number): TileEntity | undefined {
+		return this.entities.find(
+			(entity) => tileX == entity.tileX && tileY == entity.tileY,
+		);
+	}
+
+	removeEntity(entity: TileEntity) {
+		this.entities = this.entities.filter((e) => e !== entity);
+		entity.destroy();
 	}
 
 	get isPlayerOnShip(): boolean {
