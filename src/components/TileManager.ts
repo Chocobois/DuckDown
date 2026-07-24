@@ -1,7 +1,5 @@
 import Phaser from "phaser";
 import { BaseScene } from "@/scenes/BaseScene";
-// import { Tile, TileCoord } from "./Tile";
-// import { LevelKey } from "./levels";
 
 export const Tile = [
 	"Water",
@@ -128,16 +126,26 @@ export class TileManager extends Phaser.GameObjects.Container {
 	// 		}
 	// 	}
 
-	// 	public isInside({ x, y }: TileCoord): boolean {
-	// 		return x >= 0 && y >= 0 && x < this.width && y < this.height;
-	// 	}
+	public isInside(tileX: number, tileY: number): boolean {
+		return (
+			tileX >= 0 && tileY >= 0 && tileX < this.width && tileY < this.height
+		);
+	}
 
-	// 	public getTileAt(tileCoord: TileCoord): Tile {
-	// 		if (!this.isInside(tileCoord)) return "Wall";
+	public getTileAt(tileX: number, tileY: number): Tile {
+		if (!this.isInside(tileX, tileY)) return "Water";
+		return this.tiles[tileY]?.[tileX] ?? "Water";
+	}
 
-	// 		// Otherwise return the static tile type
-	// 		return this.tiles[tileCoord.y]?.[tileCoord.x] ?? "None";
-	// 	}
+	public tileToCoord(
+		tileX: number,
+		tileY: number,
+	): Phaser.Types.Math.Vector2Like {
+		return {
+			x: tileX * 128 + 64,
+			y: tileY * 128 + 64,
+		};
+	}
 
 	// 	public getLevelBounds(): Phaser.Geom.Rectangle {
 	// 		let minX = this.width;

@@ -1,6 +1,5 @@
 import { BaseScene } from "@/scenes/BaseScene";
 import { Player } from "@/components/Player";
-import { UI } from "@/components/UI";
 import { TileManager } from "@/components/TileManager";
 
 export class GameScene extends BaseScene {
@@ -24,11 +23,13 @@ export class GameScene extends BaseScene {
 		// this.background.setOrigin(0);
 		// this.fitToScreen(this.background);
 
-		this.player = new Player(this, this.CX, this.CY);
+		this.player = new Player(this);
+		this.player.on("move", this.onPlayerMove, this);
 		this.player.on("action", () => {
 			this.player.doABarrelRoll();
 		});
 		this.cameras.main.startFollow(this.player);
+		this.onPlayerSetTile(28, 15);
 
 		// this.ui = new UI(this);
 
@@ -71,5 +72,27 @@ export class GameScene extends BaseScene {
 				this.player.touchEnd(pointer.x, pointer.y);
 			}
 		});
+	}
+
+	/* Player */
+
+	onPlayerSetTile(tileX: number, tileY: number) {
+		this.player.tileX = tileX;
+		this.player.tileY = tileY;
+
+		const { x, y } = this.tileManager.tileToCoord(tileX, tileY);
+		this.player.x = x;
+		this.player.y = y;
+	}
+
+	onPlayerMove(dx: number, dy: number) {
+		const tx = this.player.tileX;
+		const ty = this.player.tileY;
+
+		const currentTile = this.tileManager.getTileAt(tx, ty);
+		const nextTile = this.tileManager.getTileAt(tx + dx, ty + dy);
+
+		// if (nextTile == "Water")
+		this.onPlayerSetTile(tx + dx, ty + dy);
 	}
 }

@@ -55,7 +55,6 @@ export class PreloadScene extends BaseScene {
 		}
 
 		for (let tilemap of tilemaps) {
-			console.log("LOAD", tilemap);
 			this.load.tilemapTiledJSON(tilemap.key, tilemap.path);
 		}
 	}
