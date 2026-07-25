@@ -11,6 +11,7 @@ const images: Image[] = [
 
   // Dockscene
   image('backgrounds/dock_background', 'dock_background'),
+  image('backgrounds/score_background', 'score_background'),
   image('shop/overworld_shop', 'overworld_shop'),
   image('characters/hero-kobold', 'kobold'),
   image('dock_boat', 'dock_boat'),
